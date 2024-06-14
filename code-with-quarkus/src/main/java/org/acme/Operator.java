@@ -1,10 +1,10 @@
 package org.acme;
 
-// import java.util.HashSet;
-// import java.util.Set;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.hibernate.envers.Audited;
-// import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Length;
 
 import io.smallrye.common.constraint.NotNull;
@@ -13,11 +13,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-// import jakarta.persistence.FetchType;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-// import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import lombok.Getter;
@@ -64,9 +64,9 @@ public class Operator {
     @Enumerated(EnumType.ORDINAL)
     private StatusActive ttsActive;
 
-    // @OneToMany(fetch = FetchType.LAZY, mappedBy = "operator")
-    // @NotAudited
-    // private Set<TeamOperator> teamOperators = new HashSet<TeamOperator>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "operator")
+    @NotAudited
+    private Set<TeamOperator> teamOperators = new HashSet<TeamOperator>();
 
     public enum StatusActive {
         INACTIVE,
