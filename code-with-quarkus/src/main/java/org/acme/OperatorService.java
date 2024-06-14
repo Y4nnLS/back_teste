@@ -60,13 +60,27 @@ public class OperatorService {
         return null;
     }
 
+    // @Transactional
+    // public boolean deleteOperator(Integer id) {
+    // Operator operator = entityManager.find(Operator.class, id);
+    // if (operator != null) {
+    // entityManager.remove(operator);
+    // return true;
+    // }
+    // return false;
+    // }
     @Transactional
     public boolean deleteOperator(Integer id) {
         Operator operator = entityManager.find(Operator.class, id);
         if (operator != null) {
+            // if (!operator.getTeamOperators().isEmpty()) {
+            //     // Operator is part of one or more teams
+            //     return false;
+            // }
             entityManager.remove(operator);
             return true;
         }
         return false;
     }
+
 }

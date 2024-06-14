@@ -40,8 +40,8 @@ public class OperatorResource {
         } catch (PersistenceException e) {
             LOGGER.error("Erro ao criar operador", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                           .entity("Erro ao criar operador: " + e.getMessage())
-                           .build();
+                    .entity("Erro ao criar operador: " + e.getMessage())
+                    .build();
         }
     }
 
@@ -68,6 +68,17 @@ public class OperatorResource {
         }
     }
 
+    // @DELETE
+    // @Path("/{id}")
+    // public Response delete(@PathParam("id") Integer id) {
+    // LOGGER.info("Recebendo solicitação para deletar operador com ID " + id);
+    // boolean deleted = operatorService.deleteOperator(id);
+    // if (deleted) {
+    // return Response.ok().build();
+    // } else {
+    // return Response.status(Response.Status.NOT_FOUND).build();
+    // }
+    // }
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") Integer id) {
@@ -76,7 +87,9 @@ public class OperatorResource {
         if (deleted) {
             return Response.ok().build();
         } else {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("O operador está associado a um time e não pode ser excluído.")
+                    .build();
         }
     }
 }

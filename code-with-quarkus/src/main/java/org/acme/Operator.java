@@ -7,6 +7,8 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import io.smallrye.common.constraint.NotNull;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
@@ -64,9 +66,10 @@ public class Operator {
     @Enumerated(EnumType.ORDINAL)
     private StatusActive ttsActive;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "operator")
-    @NotAudited
-    private Set<TeamOperator> teamOperators = new HashSet<TeamOperator>();
+    // @OneToMany(fetch = FetchType.LAZY, mappedBy = "operator")
+    // @NotAudited
+    // @JsonManagedReference
+    // private Set<TeamOperator> teamOperators = new HashSet<TeamOperator>();
 
     public enum StatusActive {
         INACTIVE,
