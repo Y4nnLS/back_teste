@@ -24,9 +24,14 @@ public class OperatorResource {
         this.operatorService = operatorService;
     }
 
+    // @GET
+    // public Response getAll() {
+    //     List<Operator> operators = operatorService.getAllOperators();
+    //     return Response.ok(operators).build();
+    // }
     @GET
-    public Response getAll() {
-        List<Operator> operators = operatorService.getAllOperators();
+    public Response getAll(@BeanParam PaginationRequestDto request) {
+        List<Operator> operators = operatorService.getAllOperators(request);
         return Response.ok(operators).build();
     }
 

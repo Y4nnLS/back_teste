@@ -2,6 +2,10 @@ package org.acme;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+// import jakarta.ws.rs.BeanParam;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.quarkus.panache.common.Page;
+import io.quarkus.panache.common.Sort;
 import io.quarkus.runtime.StartupEvent;
 
 import jakarta.enterprise.event.Observes;
@@ -25,9 +29,19 @@ public class OperatorService {
         // Executar alguma lógica ao iniciar a aplicação, se necessário
     }
 
-    public List<Operator> getAllOperators() {
-        return entityManager.createQuery("SELECT o FROM Operator o", Operator.class).getResultList();
+    public List<Operator> getAllOperators(PaginationRequestDto request) {
+        PanacheQuery<Operator> query = Operator.findAll(
+                Sort.by(request.getSort())
+                .direction(request.direction(request.getDir())))
+                .page(Page.of(request.getPageNum(), request.getPageSize()));
+
+        return query.list();
     }
+
+    // public List<Operator> getAllOperators() {
+    // return entityManager.createQuery("SELECT o FROM Operator o",
+    // Operator.class).getResultList();
+    // }
 
     @Transactional
     public Operator addOperator(Operator operator) {
@@ -74,8 +88,8 @@ public class OperatorService {
         Operator operator = entityManager.find(Operator.class, id);
         if (operator != null) {
             // if (!operator.getTeamOperators().isEmpty()) {
-            //     // Operator is part of one or more teams
-            //     return false;
+            // // Operator is part of one or more teams
+            // return false;
             // }
             entityManager.remove(operator);
             return true;

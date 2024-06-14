@@ -22,6 +22,11 @@ public class PaginationRequestDto {
     @DefaultValue("Ascending")
     private String dir;
 
+    
+
+    public PaginationRequestDto() {
+    }
+
     public PaginationRequestDto(int pageNum, int pageSize, String sort, String dir) {
         this.pageNum = pageNum;
         this.pageSize = pageSize;

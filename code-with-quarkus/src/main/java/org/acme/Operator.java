@@ -9,6 +9,8 @@ import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.smallrye.common.constraint.NotNull;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
@@ -31,7 +33,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Cacheable
-public class Operator {
+public class Operator extends PanacheEntityBase{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
