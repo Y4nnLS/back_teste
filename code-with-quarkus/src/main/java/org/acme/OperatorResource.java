@@ -25,12 +25,6 @@ public class OperatorResource {
     public Response getAll(@BeanParam PaginationRequestDto request) {
         try {
 
-            System.out.println("getAll request: " + request); // Verifica os parâmetros recebidos
-            System.out.println("getAll dir: " + request.getDir());
-            System.out.println("getAll pageNume: " + request.getPageNum());
-            System.out.println("getAll pageSize: " + request.getPageSize());
-            System.out.println("getAll Sort: " + request.getSort());
-
             OperatorService.PagedResponse pagedResponse = operatorService.getAllOperators(request);
             return Response.ok(pagedResponse).build();
         } catch (Exception e) {

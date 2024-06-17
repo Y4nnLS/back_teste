@@ -19,11 +19,6 @@ public class OperatorService {
     EntityManager entityManager;
 
     public PagedResponse getAllOperators(PaginationRequestDto request) {
-        System.out.println("getAllOperators request: " + request); // Verifica se os parâmetros estão corretos
-        System.out.println("getAllOperators sort: " + request.getSort());
-        System.out.println("getAllOperators dir: " + request.direction(request.getDir()));
-        System.out.println("getAllOperators pageNum: " + request.getPageNum());
-        System.out.println("getAllOperators pageSize: " + request.getPageSize());
         PanacheQuery<Operator> query = Operator.findAll(
                 Sort.by(request.getSort())
                         .direction(request.direction(request.getDir())))
@@ -31,7 +26,6 @@ public class OperatorService {
 
         List<Operator> operators = query.list();
         long totalRecords = query.count();
-        System.out.println("getAllOperators totalRecords: " + totalRecords); // Verifica o total de registros
 
         return new PagedResponse(operators, totalRecords, request.getPageNum(), request.getPageSize());
     }
