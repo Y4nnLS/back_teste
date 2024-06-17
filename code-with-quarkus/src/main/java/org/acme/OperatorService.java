@@ -2,20 +2,14 @@ package org.acme;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
-// import jakarta.ws.rs.BeanParam;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
-import io.quarkus.runtime.StartupEvent;
-
-import jakarta.enterprise.event.Observes;
+import org.jboss.logging.Logger;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PersistenceException;
-
 import java.util.List;
-
-import org.jboss.logging.Logger;
 
 @ApplicationScoped
 public class OperatorService {
@@ -24,24 +18,23 @@ public class OperatorService {
     @PersistenceContext
     EntityManager entityManager;
 
-    @Transactional
-    void onStart(@Observes StartupEvent ev) {
-        // Executar alguma lógica ao iniciar a aplicação, se necessário
-    }
-
-    public List<Operator> getAllOperators(PaginationRequestDto request) {
+    public PagedResponse getAllOperators(PaginationRequestDto request) {
+        System.out.println("getAllOperators request: " + request); // Verifica se os parâmetros estão corretos
+        System.out.println("getAllOperators sort: " + request.getSort());
+        System.out.println("getAllOperators dir: " + request.direction(request.getDir()));
+        System.out.println("getAllOperators pageNum: " + request.getPageNum());
+        System.out.println("getAllOperators pageSize: " + request.getPageSize());
         PanacheQuery<Operator> query = Operator.findAll(
                 Sort.by(request.getSort())
-                .direction(request.direction(request.getDir())))
+                        .direction(request.direction(request.getDir())))
                 .page(Page.of(request.getPageNum(), request.getPageSize()));
 
-        return query.list();
-    }
+        List<Operator> operators = query.list();
+        long totalRecords = query.count();
+        System.out.println("getAllOperators totalRecords: " + totalRecords); // Verifica o total de registros
 
-    // public List<Operator> getAllOperators() {
-    // return entityManager.createQuery("SELECT o FROM Operator o",
-    // Operator.class).getResultList();
-    // }
+        return new PagedResponse(operators, totalRecords, request.getPageNum(), request.getPageSize());
+    }
 
     @Transactional
     public Operator addOperator(Operator operator) {
@@ -74,27 +67,28 @@ public class OperatorService {
         return null;
     }
 
-    // @Transactional
-    // public boolean deleteOperator(Integer id) {
-    // Operator operator = entityManager.find(Operator.class, id);
-    // if (operator != null) {
-    // entityManager.remove(operator);
-    // return true;
-    // }
-    // return false;
-    // }
     @Transactional
     public boolean deleteOperator(Integer id) {
         Operator operator = entityManager.find(Operator.class, id);
         if (operator != null) {
-            // if (!operator.getTeamOperators().isEmpty()) {
-            // // Operator is part of one or more teams
-            // return false;
-            // }
             entityManager.remove(operator);
             return true;
         }
         return false;
     }
 
+    public static class PagedResponse {
+        public List<Operator> operators;
+        public long totalRecords;
+        public int currentPage;
+        public int pageSize;
+
+        public PagedResponse(List<Operator> operators, long totalRecords, int currentPage, int pageSize) {
+            this.operators = operators;
+            this.totalRecords = totalRecords;
+            this.currentPage = currentPage;
+            this.pageSize = pageSize;
+        }
+        
+    }
 }
