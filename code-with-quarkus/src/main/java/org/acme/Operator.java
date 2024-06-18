@@ -33,7 +33,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Cacheable
-public class Operator extends PanacheEntityBase{
+public class Operator extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -72,6 +72,9 @@ public class Operator extends PanacheEntityBase{
     // @NotAudited
     // @JsonManagedReference
     // private Set<TeamOperator> teamOperators = new HashSet<TeamOperator>();
+    
+    // Construtor vazio é necessário para JPA
+
 
     public enum StatusActive {
         INACTIVE,

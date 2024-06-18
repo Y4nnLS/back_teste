@@ -3,6 +3,9 @@ package org.acme;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import java.util.List;
+
 import org.jboss.logging.Logger;
 import jakarta.inject.Inject;
 import jakarta.persistence.PersistenceException;
@@ -32,6 +35,20 @@ public class OperatorResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Erro ao buscar operadores: " + e.getMessage())
                     .build();
+        }
+    }
+
+    @GET
+    @Path("/all")
+    public Response getAllOperators() {
+        try {
+            List<OperatorDto> operators = operatorService.getAllOperatorsDto();
+            return Response.ok(operators).build();
+        } catch (Exception e) {
+            LOGGER.error("Erro ao buscar todos os operadores", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                           .entity("Erro ao buscar todos os operadores: " + e.getMessage())
+                           .build();
         }
     }
 

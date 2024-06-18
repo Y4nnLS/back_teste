@@ -30,6 +30,12 @@ public class OperatorService {
         return new PagedResponse(operators, totalRecords, request.getPageNum(), request.getPageSize());
     }
 
+    // Método para buscar todos os operadores (apenas id e name)
+    public List<OperatorDto> getAllOperatorsDto() {
+        return entityManager.createQuery("SELECT new org.acme.OperatorDto(o.id, o.name) FROM Operator o", OperatorDto.class)
+                            .getResultList();
+    }
+
     @Transactional
     public Operator addOperator(Operator operator) {
         try {
@@ -83,6 +89,6 @@ public class OperatorService {
             this.currentPage = currentPage;
             this.pageSize = pageSize;
         }
-        
+
     }
 }

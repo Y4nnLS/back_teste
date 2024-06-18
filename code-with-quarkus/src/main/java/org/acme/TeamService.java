@@ -19,9 +19,11 @@ public class TeamService {
     EntityManager entityManager;
 
     public PagedResponse getAllTeams(PaginationRequestDto request) {
-        // System.out.println("getAllTeams request: " + request); // Verifica se os parâmetros estão corretos
+        // System.out.println("getAllTeams request: " + request); // Verifica se os
+        // parâmetros estão corretos
         // System.out.println("getAllTeams sort: " + request.getSort());
-        // System.out.println("getAllTeams dir: " + request.direction(request.getDir()));
+        // System.out.println("getAllTeams dir: " +
+        // request.direction(request.getDir()));
         // System.out.println("getAllTeams pageNum: " + request.getPageNum());
         // System.out.println("getAllTeams pageSize: " + request.getPageSize());
         PanacheQuery<Team> query = Team.findAll(
@@ -48,11 +50,15 @@ public class TeamService {
     }
 
     public Team getTeamById(Integer id) {
+        LOGGER.info("Recebendo solicitação ver time com id: " + id);
+        System.out.println("entrou getTeamById: " + id); // Verifica o total de registros
         return entityManager.find(Team.class, id);
     }
 
     @Transactional
     public Team updateTeam(Integer id, Team updatedTeam) {
+        System.out.println("entrou updateTeam: " + id); // Verifica o total de registros
+
         Team team = entityManager.find(Team.class, id);
         if (team != null) {
             team.setName(updatedTeam.getName());

@@ -24,7 +24,8 @@ public class TeamResource {
     @GET
     public Response getAll(@BeanParam PaginationRequestDto request) {
         try {
-            // System.out.println("getAll request: " + request); // Verifica os parâmetros recebidos
+            // System.out.println("getAll request: " + request); // Verifica os parâmetros
+            // recebidos
             // System.out.println("getAll dir: " + request.getDir());
             // System.out.println("getAll pageNum: " + request.getPageNum());
             // System.out.println("getAll pageSize: " + request.getPageSize());
@@ -43,10 +44,31 @@ public class TeamResource {
     @POST
     @Path("/add")
     public Response create(Team team) {
+        System.out.println(team);
         try {
             LOGGER.info("Recebendo solicitação para criar time: " + team);
+            System.out.println("nome: " + team.getName());
+            System.out.println("operators: " + team.getOperators());
+
+            // Verifica se a lista de operadores contém valores inválidos
+            if (team.getName() == null || team.getName().isEmpty()) {
+                System.out.println("aaaaaaaaaaaaa");
+                return Response.status(Response.Status.BAD_REQUEST)
+                               .entity("O nome do time é obrigatório.")
+                               .build();
+            }
+    
+            if (team.getOperators() == null || team.getOperators().isEmpty() || team.getOperators().get(0) == null) {
+                System.out.println("bbbbbbbbbbb");
+
+                return Response.status(Response.Status.BAD_REQUEST)
+                               .entity("Pelo menos um operador é obrigatório.")
+                               .build();
+            }
+            LOGGER.info("passou ifs: ");
             Team persistedTeam = teamService.addTeam(team);
-            return Response.ok(persistedTeam).build(); // Retorna HTTP 200 e a entidade persistida
+            LOGGER.info("Time criado com sucesso: " + persistedTeam);
+            return Response.ok(persistedTeam).build();
         } catch (PersistenceException e) {
             LOGGER.error("Erro ao criar time", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
