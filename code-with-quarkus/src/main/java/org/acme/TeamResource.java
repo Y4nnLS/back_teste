@@ -130,7 +130,7 @@ public class TeamResource {
         if (deleted) {
             return Response.ok().build();
         } else {
-            return Response.status(Response.Status.BAD_REQUEST)
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("O time está associado a operadores e não pode ser excluído.")
                     .build();
         }

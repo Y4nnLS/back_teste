@@ -4,11 +4,13 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import org.jboss.logging.Logger;
 import jakarta.inject.Inject;
 import jakarta.persistence.PersistenceException;
+import jakarta.validation.ConstraintViolationException;
 
 @Path("/operators")
 @Produces(MediaType.APPLICATION_JSON)
@@ -47,8 +49,8 @@ public class OperatorResource {
         } catch (Exception e) {
             LOGGER.error("Erro ao buscar todos os operadores", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                           .entity("Erro ao buscar todos os operadores: " + e.getMessage())
-                           .build();
+                    .entity("Erro ao buscar todos os operadores: " + e.getMessage())
+                    .build();
         }
     }
 
@@ -93,14 +95,37 @@ public class OperatorResource {
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") Integer id) {
+    try {
         LOGGER.info("Recebendo solicitação para deletar operador com ID " + id);
         boolean deleted = operatorService.deleteOperator(id);
         if (deleted) {
             return Response.ok().build();
         } else {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("O operador está associado a um time e não pode ser excluído.")
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Operador com ID " + id + " não encontrado")
                     .build();
         }
+    } catch (PersistenceException e) {
+        Throwable cause = e.getCause();
+        if (cause instanceof ConstraintViolationException) {
+            Throwable rootCause = cause.getCause();
+            if (rootCause instanceof SQLIntegrityConstraintViolationException) {
+                LOGGER.error("Erro de violação de restrição de chave estrangeira ao deletar operador: " + rootCause.getMessage());
+                return Response.status(Response.Status.CONFLICT)
+                        .entity("Este operador está associado a um time e não pode ser deletado.")
+                        .build();
+            }
+        }
+        LOGGER.error("Erro ao deletar operador", e);
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity("Erro ao deletar operador: " + e.getMessage())
+                .build();
+    } catch (Exception e) {
+        LOGGER.error("Erro ao deletar operador", e);
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity("Erro ao deletar operador: " + e.getMessage())
+                .build();
     }
+}
+
 }

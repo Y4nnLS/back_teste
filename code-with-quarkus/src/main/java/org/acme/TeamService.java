@@ -21,13 +21,7 @@ public class TeamService {
     EntityManager entityManager;
 
     public PagedResponse getAllTeams(PaginationRequestDto request) {
-        // System.out.println("getAllTeams request: " + request); // Verifica se os
-        // parâmetros estão corretos
-        // System.out.println("getAllTeams sort: " + request.getSort());
-        // System.out.println("getAllTeams dir: " +
-        // request.direction(request.getDir()));
-        // System.out.println("getAllTeams pageNum: " + request.getPageNum());
-        // System.out.println("getAllTeams pageSize: " + request.getPageSize());
+
         PanacheQuery<Team> query = Team.findAll(
                 Sort.by(request.getSort())
                         .direction(request.direction(request.getDir())))
