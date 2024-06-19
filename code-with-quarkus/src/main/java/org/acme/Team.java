@@ -54,6 +54,17 @@ public class Team  extends PanacheEntityBase{
     @JoinTable(name = "team_operator", joinColumns = @JoinColumn(name = "team_id"), inverseJoinColumns = @JoinColumn(name = "operator_id"))
     private List<Operator> operators;
 
+    public void setOperators(List<Operator> operators) {
+        this.operators = operators;
+    }
+
+    @Override
+    public String toString() {
+        return "Team [id=" + id + ", name=" + name + ", operators=" + operators + "]";
+    }
+
+    
+
     // @OneToMany(fetch = FetchType.LAZY, mappedBy = "team")
     // @NotAudited
     // private Set<CommunicationConfig> communicationConfig = new HashSet<CommunicationConfig>(0);

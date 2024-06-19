@@ -9,6 +9,8 @@ import org.jboss.logging.Logger;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PersistenceException;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @ApplicationScoped
@@ -41,6 +43,7 @@ public class TeamService {
     @Transactional
     public Team addTeam(Team team) {
         try {
+            System.out.println("aaaaaaaaaa: "+team);
             entityManager.persist(team);
             return team;
         } catch (Exception e) {

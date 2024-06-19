@@ -3,9 +3,15 @@ package org.acme;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.logging.Logger;
 import jakarta.inject.Inject;
 import jakarta.persistence.PersistenceException;
+
+import org.acme.OperatorService;
 
 @Path("/teams")
 @Produces(MediaType.APPLICATION_JSON)
@@ -15,22 +21,17 @@ public class TeamResource {
     private static final Logger LOGGER = Logger.getLogger(TeamResource.class);
 
     private final TeamService teamService;
+    private final OperatorService operatorService;
 
     @Inject
-    public TeamResource(TeamService teamService) {
+    public TeamResource(TeamService teamService, OperatorService operatorService) {
         this.teamService = teamService;
+        this.operatorService = operatorService;
     }
 
     @GET
     public Response getAll(@BeanParam PaginationRequestDto request) {
         try {
-            // System.out.println("getAll request: " + request); // Verifica os parâmetros
-            // recebidos
-            // System.out.println("getAll dir: " + request.getDir());
-            // System.out.println("getAll pageNum: " + request.getPageNum());
-            // System.out.println("getAll pageSize: " + request.getPageSize());
-            // System.out.println("getAll Sort: " + request.getSort());
-
             TeamService.PagedResponse pagedResponse = teamService.getAllTeams(request);
             return Response.ok(pagedResponse).build();
         } catch (Exception e) {
@@ -44,33 +45,54 @@ public class TeamResource {
     @POST
     @Path("/add")
     public Response create(Team team) {
-        System.out.println(team);
+        LOGGER.info("Recebendo solicitação para criar time: " + team.toString());
+        // Verificando os operadores recebidos
+        List<Operator> operatorss = team.getOperators();
+        if (operatorss != null) {
+            for (Operator operator : operatorss) {
+                LOGGER.info("Operador recebido: " + operator.getId());
+                // Aqui você pode adicionar mais detalhes do operador, se necessário
+            }
+        } else {
+            LOGGER.info("Nenhum operador recebido.");
+        }
+
         try {
-            LOGGER.info("Recebendo solicitação para criar time: " + team);
-            System.out.println("nome: " + team.getName());
-            System.out.println("operators: " + team.getOperators());
+            // Aqui você pode iterar pelos IDs dos operadores e buscar cada um no banco de
+            // dados
+            List<Operator> operators = team.getOperators();
 
-            // Verifica se a lista de operadores contém valores inválidos
-            if (team.getName() == null || team.getName().isEmpty()) {
-                System.out.println("aaaaaaaaaaaaa");
-                return Response.status(Response.Status.BAD_REQUEST)
-                               .entity("O nome do time é obrigatório.")
-                               .build();
-            }
-    
-            if (team.getOperators() == null || team.getOperators().isEmpty() || team.getOperators().get(0) == null) {
-                System.out.println("bbbbbbbbbbb");
+            List<Operator> resolvedOperators = new ArrayList<>();
 
-                return Response.status(Response.Status.BAD_REQUEST)
-                               .entity("Pelo menos um operador é obrigatório.")
-                               .build();
+            for (Operator operator : operators) {
+                Operator resolvedOperator = operatorService.getOperatorById(operator.getId());
+
+                if (resolvedOperator != null) {
+
+                    resolvedOperators.add(resolvedOperator);
+                } else {
+                    // Se o operador com o ID especificado não for encontrado, você pode decidir
+                    // como lidar com isso
+                    // Exemplo: lançar uma exceção ou retornar um erro específico
+                    return Response.status(Response.Status.BAD_REQUEST)
+                            .entity("Operador com ID " + operator.getId() + " não encontrado")
+                            .build();
+                }
             }
-            LOGGER.info("passou ifs: ");
+
+            // Defina os operadores associados ao time
+            team.setOperators(resolvedOperators);
+
+            // Chama o método do service para persistir o time
             Team persistedTeam = teamService.addTeam(team);
-            LOGGER.info("Time criado com sucesso: " + persistedTeam);
             return Response.ok(persistedTeam).build();
         } catch (PersistenceException e) {
-            LOGGER.error("Erro ao criar time", e);
+            System.err.println("Erro ao persistir time no banco de dados: " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Falha ao salvar o time")
+                    .build();
+        } catch (Exception e) {
+            System.err.println("Erro ao criar time: " + e.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Erro ao criar time: " + e.getMessage())
                     .build();

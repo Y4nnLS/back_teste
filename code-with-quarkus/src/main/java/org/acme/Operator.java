@@ -75,7 +75,18 @@ public class Operator extends PanacheEntityBase {
     
     // Construtor vazio é necessário para JPA
 
-
+    @Override
+    public String toString() {
+        return "Operator{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", emailActive=" + emailActive +
+                ", telephone='" + telephone + '\'' +
+                ", smsActive=" + smsActive +
+                ", ttsActive=" + ttsActive +
+                '}';
+    }
     public enum StatusActive {
         INACTIVE,
         ACTIVE
