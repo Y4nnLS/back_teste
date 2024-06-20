@@ -29,7 +29,6 @@ public class TeamService {
 
         List<Team> teams = query.list();
         long totalRecords = query.count();
-        System.out.println("getAllTeams totalRecords: " + totalRecords); // Verifica o total de registros
 
         return new PagedResponse(teams, totalRecords, request.getPageNum(), request.getPageSize());
     }
@@ -37,7 +36,6 @@ public class TeamService {
     @Transactional
     public Team addTeam(Team team) {
         try {
-            System.out.println("aaaaaaaaaa: "+team);
             entityManager.persist(team);
             return team;
         } catch (Exception e) {
@@ -48,13 +46,11 @@ public class TeamService {
 
     public Team getTeamById(Integer id) {
         LOGGER.info("Recebendo solicitação ver time com id: " + id);
-        System.out.println("entrou getTeamById: " + id); // Verifica o total de registros
         return entityManager.find(Team.class, id);
     }
 
     @Transactional
     public Team updateTeam(Integer id, Team updatedTeam) {
-        System.out.println("entrou updateTeam: " + id); // Verifica o total de registros
 
         Team team = entityManager.find(Team.class, id);
         if (team != null) {
